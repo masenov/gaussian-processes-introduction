@@ -1,0 +1,3 @@
+lyx /home/martin/Dropbox/MSc/ASR/newfile2.lyx &
+cd /home/martin/Dropbox/MSc/ASR/report
+jupyter notebook
