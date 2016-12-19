@@ -25,4 +25,5 @@ Jupyter Notebook (http://jupyter.org/)
 4)Run *jupyter notebook* from the root directory of the project. The code is found in the different notebooks
 
 **Remarks**
+
 In the repository you can also find accompaying presentation and report that explain Gaussian Processes and the work done in this project.
