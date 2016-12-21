@@ -89,6 +89,17 @@ def sigma(ndim=6,length=6,uniform=False,sigma_v=0.1,l=3,sigma_f=1):
 
 
 def plotGP(x=None,y=None,dots=False,usecolors=True,lw=3,filename=None,xname="X",yname="Y",xlim=None,ylim=None,data=None):
+    if (data is not None):
+        plt.figure()
+        plt.plot(data[0],data[1],'*',c='b',markersize=10)
+        plt.xlabel(xname)
+        plt.ylabel(yname)
+        if (xlim):
+            plt.xlim(0.5,0.5+xlim)
+        if (ylim):
+            plt.ylim(-ylim,ylim)
+        plt.savefig(str(filename)+'_data.png', dpi=200,bbox_inches='tight')
+    plt.figure()
     samples=y.shape[1]
     ndim=y.shape[0]
     if (x is None):
@@ -113,7 +124,7 @@ def plotGP(x=None,y=None,dots=False,usecolors=True,lw=3,filename=None,xname="X",
     if (data is not None):
         plt.plot(data[0],data[1],'*',c='b',markersize=10)
     if (filename):
-        plt.savefig('../FinalReport/Pictures/Introduction/'+str(filename)+'.png', dpi=200,bbox_inches='tight')
+        plt.savefig(str(filename)+'.png', dpi=200,bbox_inches='tight')
     plt.figure()
     plt.errorbar(x,np.mean(y,axis=1),yerr=np.std(y,axis=1),ecolor='r')
     plt.plot(x,np.mean(y,axis=1),c='r')
@@ -121,23 +132,10 @@ def plotGP(x=None,y=None,dots=False,usecolors=True,lw=3,filename=None,xname="X",
     plt.ylabel(yname)
     if (xlim):
         plt.xlim(0.5,0.5+xlim)
-    #if (ylim):
-    plt.ylim(25,30)
-    #if (data is not None):
-        #plt.plot(data[0],data[1],'*',c='b',markersize=10)
+    if (ylim):
+        plt.ylim(-ylim,ylim)
     if (filename):
-        plt.savefig('../FinalReport/Pictures/Introduction/'+str(filename)+'_erbr.png', dpi=200,bbox_inches='tight')
-    if (data is not None):
-        plt.figure()
-        plt.plot(data[0],data[1],'*',c='b',markersize=10)
-        plt.xlabel(xname)
-        plt.ylabel(yname)
-        if (xlim):
-            plt.xlim(0.5,0.5+xlim)
-        if (ylim):
-            plt.ylim(-ylim,ylim)
-        plt.savefig('../FinalReport/Pictures/Introduction/'+str(filename)+'_data.png', dpi=200,bbox_inches='tight')
-
+        plt.savefig(str(filename)+'_erbr.png', dpi=200,bbox_inches='tight')
 
 
 def inference(sample_x, sample_y, x, cov, ndim=40, length=6, sigma_v=0, l=2, sigma_f=1, sigma_n=0):
@@ -158,12 +156,12 @@ def inference(sample_x, sample_y, x, cov, ndim=40, length=6, sigma_v=0, l=2, sig
     return mu,cov
 
 
-def genGP(samples=10, ndim=40, length=6, sigma_v=0, l=2, sigma_f=1, uniform=True, dots=False, lw=3, xname="X", yname="Y", ylim=None , usecolors=True, filename=None):
+def genGP(samples=10, ndim=40, length=6, sigma_v=0, l=2, sigma_f=1, uniform=True, dots=False, lw=3, xname="X", yname="Y", ylim=None, mean=0, usecolors=True, filename=None):
     samples=samples
     ndim=ndim
     length=length
 
-    mu=np.ones(ndim)*28
+    mu=np.ones(ndim)*mean
     cov,x=sigma(ndim,uniform=uniform,length=length,sigma_v=sigma_v,l=l,sigma_f=sigma_f)
 
     y=np.random.multivariate_normal(mu, cov, samples).T  
