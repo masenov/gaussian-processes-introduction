@@ -11,6 +11,8 @@ Matplotlib - 1.5.3 (http://matplotlib.org/)
 
 Numpy - 1.11.2
 
+Seaborn - 0.7.1
+
 Jupyter Notebook (http://jupyter.org/)
 
 
