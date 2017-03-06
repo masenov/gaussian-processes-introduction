@@ -7,7 +7,8 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import holoviews as hv
 import numpy as np
-
+import warnings
+warnings.filterwarnings('ignore')
 
 interval = 10
 interval_size = 0.01
@@ -106,7 +107,7 @@ def plotGP(x=None,y=None,dots=False,usecolors=True,lw=3,filename=None,xname="X",
         x = np.arange(1,ndim+1)
     if (usecolors):
         hsv = plt.get_cmap('hsv')
-        colors = hsv(np.arange(0, 1, 1/samples))
+        colors = hsv(np.arange(0, 1, 1.0/samples))
     for i in range(samples):
         if (usecolors):
             color = colors[i]
@@ -146,12 +147,51 @@ def inference(sample_x, sample_y, x, cov, ndim=40, length=6, sigma_v=0, l=2, sig
     for i in range(ndim):
         for j in range(nsample):
             k_data[i,j]=k(sample_x[j],x[i],sigma_f,l)
-            
     for i in range(nsample):
         for j in range(nsample):
-            cov_data[i,j] = k(sample_x[i],sample_x[j],sigma_f,l) + sigma_v**2*direct_delta(x[i],x[j]) + sigma_n**2*direct_delta(x[i],x[j])
-
+            cov_data[i,j] = k(sample_x[i],sample_x[j],sigma_f,l) + sigma_v**2*direct_delta(x[i],x[j])
     mu = np.dot(np.dot(k_data,np.linalg.inv(cov_data)),sample_y)
+    cov = cov - np.dot(np.dot(k_data,np.linalg.inv(cov_data)),k_data.T)
+    return mu,cov
+
+def k2(i,j,sigma_f,l):
+    return np.power(sigma_f,2)*np.exp(-(np.power((i[0]-j[0]),2)/(2*np.power(l,2)) + np.power((i[1]-j[1]),2)/(2*np.power(l,2))))
+
+def direct_delta2(i,j):
+    if (i[0]==j[0] and i[1]==j[1]):
+        return 1
+    else:
+        return 0
+
+def sigma2(ndim=6,length=6,uniform=False,sigma_v=0,l=1,sigma_f=5):
+    if (uniform):
+        x = np.random.uniform(1,length,ndim)
+        x.sort()
+        y = np.random.uniform(1,length,ndim)
+        y.sort()
+    else:
+        x = np.linspace(1, length, ndim)
+        y = np.linspace(1, length, ndim)
+    [X,Y] = np.meshgrid(x,y)
+    X = X.flatten()
+    Y = Y.flatten()
+    cov = np.zeros((ndim*ndim,ndim*ndim))
+    for i in range(ndim*ndim):
+        for j in range(ndim*ndim):
+                    cov[i,j]=k2((X[i],Y[i]),(X[j],Y[j]),sigma_f,l)
+    return cov,X,Y
+
+def inference2D(sample_x, sample_y, sample_z, x, y, cov, ndim=40, length=6, sigma_v=0, l=1, sigma_f=5, sigma_n=0):
+    nsample = sample_x.shape[0]
+    k_data = np.zeros((ndim**2,nsample))
+    cov_data = np.zeros((nsample,nsample))
+    for i in range(ndim**2):
+        for j in range(nsample):
+            k_data[i,j]=k2((sample_x[j],sample_y[j]),(x[i],y[i]),sigma_f,l)
+    for i in range(nsample):
+        for j in range(nsample):
+            cov_data[i,j] = k2((sample_x[i],sample_y[i]),(sample_x[j],sample_y[j]),sigma_f,l) + sigma_v**2*direct_delta((sample_x[i],sample_x[j]),(sample_y[i],sample_y[j]))
+    mu = np.dot(np.dot(k_data,np.linalg.inv(cov_data)),sample_z)
     cov = cov - np.dot(np.dot(k_data,np.linalg.inv(cov_data)),k_data.T)
     return mu,cov
 
