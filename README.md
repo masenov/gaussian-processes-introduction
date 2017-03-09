@@ -29,3 +29,5 @@ Jupyter Notebook (http://jupyter.org/)
 **Remarks**
 
 In the repository you can also find accompaying presentation and report that explain Gaussian Processes and the work done in this project.
+
+https://www.youtube.com/watch?v=kIjCoCY5i5Q
